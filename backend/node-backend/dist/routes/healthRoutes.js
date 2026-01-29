@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { HealthIncidentController } from '../controllers/healthIncidentController.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
+const router = Router();
+router.use(authMiddleware);
+router.post('/record-sickness', HealthIncidentController.recordSickness);
+router.post('/mark-healed', HealthIncidentController.markHealed);
+router.post('/log-incident', HealthIncidentController.logIncident);
+router.get('/', HealthIncidentController.getIncidents);
+export default router;

@@ -1,0 +1,9 @@
+{
+  "checks": [],
+  "summary": {
+    "totalUserRoles": 5,
+    "studentsInLimbo": 0,
+    "classCourseAssignmentConflicts": 0,
+    "totalFeePayments": 1200000
+  }
+}

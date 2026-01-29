@@ -1,0 +1,14 @@
+**/.git
+**/.DS_Store
+**/node_modules
+**/dist
+frontend/.env.local
+frontend/.env.*.local
+backend/vendor
+backend/storage
+backend/logs
+backend/tmp
+backend/cache
+backend/.env
+backend/.env.*
+*.log

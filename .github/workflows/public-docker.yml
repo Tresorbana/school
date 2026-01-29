@@ -1,0 +1,128 @@
+name: Publish Docker images
+
+on:
+  push:
+    branches:
+      - prod
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.backend
+          push: true
+          tags: |
+            ashraftuyubahe001160/rcaspire-backend:latest
+            ashraftuyubahe001160/rcaspire-backend:${{ github.sha }}
+
+      - name: Build and push frontend image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile.frontend
+          push: true
+          tags: |
+            ashraftuyubahe001160/rcaspire-frontend:latest
+            ashraftuyubahe001160/rcaspire-frontend:${{ github.sha }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    env:
+      POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      APP_ENV: ${{ secrets.APP_ENV }}
+      BASE_PATH: ${{ secrets.BASE_PATH }}
+      FRONTEND_URL: ${{ secrets.FRONTEND_URL }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_NAME: ${{ secrets.DB_NAME }}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      JWT_ALGO: ${{ secrets.JWT_ALGO }}
+      VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
+    steps:
+      - name: Create .ssh Directory
+        run: mkdir -p $HOME/.ssh
+
+      - name: Create known_hosts File
+        run: touch $HOME/.ssh/known_hosts
+
+      - name: Remove Old Host Key
+        run: ssh-keygen -R ${{ secrets.DEPLOY_HOST }}
+
+      - name: Add and Display Updated Host Key
+        run: |
+          HOST_KEY=$(ssh-keyscan -t rsa ${{ secrets.DEPLOY_HOST }})
+          echo "$HOST_KEY"
+          echo "$HOST_KEY" >> $HOME/.ssh/known_hosts
+
+      - name: Deploy to server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          port: ${{ secrets.DEPLOY_PORT }}
+          username: ${{ secrets.DEPLOY_USER }}
+          password: ${{ secrets.DEPLOY_PASSWORD }}
+          script: |
+            cd ~/aspire/RCAspire/
+            echo "Exporting environment variables..."
+            export POSTGRES_DB=$POSTGRES_DB
+            export POSTGRES_USER=$POSTGRES_USER
+            export POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+            export APP_ENV=$APP_ENV
+            export BASE_PATH=$BASE_PATH
+            export FRONTEND_URL=$FRONTEND_URL
+            export DB_HOST=$DB_HOST
+            export DB_PORT=$DB_PORT
+            export DB_NAME=$DB_NAME
+            export DB_USER=$DB_USER
+            export DB_PASSWORD=$DB_PASSWORD
+            export JWT_SECRET=$JWT_SECRET
+            export JWT_ALGO=$JWT_ALGO
+            export VITE_API_URL=$VITE_API_URL
+
+            echo "Logging in to Docker Hub..."
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin docker.io
+
+            echo "Pulling backend image..."
+            docker pull ashraftuyubahe001160/rcaspire-backend:latest
+
+            echo "Pulling frontend image..."
+            docker pull ashraftuyubahe001160/rcaspire-frontend:latest
+
+            echo "Pruning only dangling images for RCAspire project..."
+            docker image prune -f --filter "dangling=true"
+
+            echo "Stopping RCAspire containers if running..."
+            docker stop rcaspire-db rcaspire-backend rcaspire-frontend || true
+            docker rm rcaspire-db rcaspire-backend rcaspire-frontend || true
+
+            echo "Shutting down existing RCAspire containers and network..."
+            docker-compose down
+
+            echo "Starting RCAspire containers..."
+            docker-compose up -d

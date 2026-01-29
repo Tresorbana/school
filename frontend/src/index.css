@@ -1,0 +1,94 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: "Poppins";
+    src: url("./assets/fonts/poppins-regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("./assets/fonts/poppins-bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: "Poppins";
+    src: url("./assets/fonts/poppins-italic.ttf") format("truetype");
+    font-weight: 400;
+    font-style: italic;
+}
+
+@layer components {
+    .widget-title {
+        @apply text-xl font-bold mt-7;
+    }
+
+    .widget-subtitle {
+        @apply text-gray-500 ;
+    }
+}
+
+.custom-select {
+    appearance: none;         /* Removes default arrow */
+    -webkit-appearance: none; /* for Safari */
+    -moz-appearance: none;    /* for Firefox */
+
+    background: url("data:image/svg+xml;utf8,<svg fill='white' height='30' viewBox='0 0 24 24' width='28' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")
+                no-repeat right 0.75rem center/1.5rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #001240;
+    padding: 0.5rem 2rem;
+    color: white; /* make text white too */
+    font-size: 10.5px;
+}
+
+.custom-select:focus {
+  outline: none;
+  border-color: #666;
+}
+
+.custom-select option {
+  font-size: 10.5px;
+}
+
+.custom-select-2 {
+    appearance: none;         /* Removes default arrow */
+    -webkit-appearance: none; /* Safari */
+    -moz-appearance: none;    /* Firefox */
+
+    background: url("data:image/svg+xml;utf8,<svg fill='white' height='30' viewBox='0 0 24 24' width='28' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>")
+                no-repeat right 0.75rem center/1.5rem;
+    border: 1px solid #0f2a6f;
+    border-radius: 5px;
+    background-color: #001240;
+    padding: 0.5rem 2.3rem;
+    color: #b4b6bb; /* make text white too */
+    font-size: 10px;
+}
+
+.custom-select-2:focus {
+  outline: none;
+  border-color: #666;
+}
+
+.custom-select-2 option {
+  font-size: 11.5px;
+  color: #001240;
+  background-color: #f6f6f6;
+}
+
+/* Hide scrollbar in modal */
+.overflow-y-auto::-webkit-scrollbar {
+  display: none;
+}
+
+.overflow-y-auto {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

@@ -1,0 +1,50 @@
+todo.md
+
+# editor based
+.vscode
+.windsurf
+
+desktop.ini
+
+# testing directoriess
+testing
+__testing__
+frontend/__mock__
+
+# --- Backend ---
+backend/.env
+backend/vendor/
+backend/migrations/temp_queries
+backend/composer.phar
+backend/.phpunit.result.cache
+backend/tests/_output/
+backend/tests/_support/_generated/
+
+# --- Frontend ---
+frontend/node_modules
+frontend/dist
+frontend/dist-ssr
+frontend/.env
+frontend/*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Editor/OS
+.idea
+.DS_Store
+Thumbs.db
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+# .docker-compose.yml
+# docker-compose.override.yml
+# .env

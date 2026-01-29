@@ -1,0 +1,37 @@
+{
+  "login": {
+    "status": "success",
+    "user": {
+      "id": "5ed8e88e-3b16-4225-97fb-d677784bc62c",
+      "first_name": "System",
+      "last_name": "Admin",
+      "email": "admin@build.com"
+    },
+    "roles": [
+      "admin"
+    ],
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNWVkOGU4OGUtM2IxNi00MjI1LTk3ZmItZDY3Nzc4NGJjNjJjIiwicm9sZXMiOls2Nzk0XSwiaWF0IjoxNzY5Njc4NjA3LCJleHAiOjE3Njk3NjUwMDd9.CHIVQKy5sUDRS0ae1jbbj6vnt0k67KsbaF2oF0ELkds"
+  },
+  "feePayment": {
+    "success": true,
+    "data": {
+      "payment_id": "b502269f-de69-4a2c-bc73-0f7d9e870fbc",
+      "student_id": "8946a51e-1d93-4ef0-b645-83effad5f03e",
+      "amount": "50000",
+      "academic_year": 2024,
+      "term": 1,
+      "category": "Tuition",
+      "payment_date": "2026-01-29T09:23:27.699Z",
+      "received_by": "5ed8e88e-3b16-4225-97fb-d677784bc62c",
+      "description": "Partial payment for term 1"
+    }
+  },
+  "financeSummary": {
+    "success": true,
+    "data": {
+      "total_income": "2500000",
+      "total_expenses": "1200000",
+      "net_balance": 1300000
+    }
+  }
+}

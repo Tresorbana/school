@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import { SelfStudyAttendanceController } from '../controllers/selfStudyAttendanceController.js';
+import { authMiddleware } from '../middleware/authMiddleware.js';
+const router = Router();
+router.use(authMiddleware);
+router.post('/', SelfStudyAttendanceController.createSession);
+router.put('/:id/submit', SelfStudyAttendanceController.submitAttendance);
+router.get('/', SelfStudyAttendanceController.getSessions);
+router.delete('/:id', SelfStudyAttendanceController.deleteSession);
+export default router;

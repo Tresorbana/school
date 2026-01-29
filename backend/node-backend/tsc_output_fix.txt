@@ -1,0 +1,7 @@
+﻿src/controllers/deliberationController.ts(41,17): error TS2345: Argument of type 'string | string[]' is not assignable to parameter of type 'string'.
+  Type 'string[]' is not assignable to type 'string'.
+src/routes/dashboardRoutes.ts(10,54): error TS2339: Property 'getSelfStudyStatus' does not exist on type 'typeof DashboardController'.
+src/routes/reportRoutes.ts(10,42): error TS2339: Property 'getByClass' does not exist on type 'typeof ReportController'.
+src/routes/reportRoutes.ts(11,40): error TS2339: Property 'getHealthStats' does not exist on type 'typeof ReportController'.
+src/services/attendanceService.ts(85,23): error TS2339: Property 'attendancePermissionRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/services/attendanceService.ts(100,23): error TS2339: Property 'attendancePermissionRequest' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
