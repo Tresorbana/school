@@ -39,17 +39,7 @@ export interface ApiResponse {
 }
 
 export const healthService = {
-  /**
-   * Get classes with sick student counts (Nurse only)
-   */
-  getClassesWithSickStudents: async (): Promise<ApiResponse> => {
-    try {
-      return await apiClient.get('/api/classes/sick');
-    } catch (error: any) {
-      console.error('Health service - getClassesWithSickStudents failed:', error);
-      throw error;
-    }
-  },
+
 
   /**
    * Record health status for multiple students
@@ -124,46 +114,7 @@ export const healthService = {
     }
   },
 
-  /**
-   * Get nurse report statistics (for cards)
-   */
-  getNurseReportStatistics: async (): Promise<ApiResponse> => {
-    try {
-      return await apiClient.get('/api/reports/nurse/statistics');
-    } catch (error: any) {
-      console.error('Health service - getNurseReportStatistics failed:', error);
-      throw error;
-    }
-  },
 
-  /**
-   * Get most sick classes (for pie chart)
-   */
-  getMostSickClasses: async (limit?: number): Promise<ApiResponse> => {
-    try {
-      const params = limit ? `?limit=${limit}` : '';
-      return await apiClient.get(`/api/reports/nurse/most-sick-classes${params}`);
-    } catch (error: any) {
-      console.error('Health service - getMostSickClasses failed:', error);
-      throw error;
-    }
-  },
-
-  /**
-   * Get health status by date range (for bar chart)
-   */
-  getHealthStatusByDateRange: async (startDate: string, endDate: string, classId?: string): Promise<ApiResponse> => {
-    try {
-      return await apiClient.post('/api/reports/nurse/health-status-by-date-range', {
-        start_date: startDate,
-        end_date: endDate,
-        class_id: classId || null
-      });
-    } catch (error: any) {
-      console.error('Health service - getHealthStatusByDateRange failed:', error);
-      throw error;
-    }
-  }
 };
 
 export default healthService;

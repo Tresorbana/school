@@ -1,6 +1,6 @@
 import { useAuth } from "../../utils/context/AuthContext";
 import Role from "../../utils/constants";
-import type { JSX } from "react";
+
 
 interface ViewHeaderProps {
   title: string;
@@ -20,16 +20,11 @@ const ViewHeader: React.FC<ViewHeaderProps> = ({ title, description: propDescrip
     const descriptions: Record<string, Record<string, string>> = {
       "Dashboard": {
         [Role.ADMIN]: "Monitor school attendance overview and system performance",
-        [Role.TEACHER]: "View your classes and record student attendance",
-        [Role.DISCIPLINE]: "Track attendance patterns and manage disciplinary actions",
-        [Role.NURSE]: "Monitor student health and attendance-related medical issues"
+        [Role.TEACHER]: "View your classes and record student attendance"
       },
       "Attendance": {
-        [Role.DISCIPLINE]: "Review and manage student attendance records",
-        [Role.NURSE]: "Track health-related absences and medical records"
       },
       "Health": {
-        [Role.NURSE]: "Monitor student health status and manage medical records"
       },
       "Classes": {
         [Role.ADMIN]: "Manage class schedules and student assignments",
@@ -37,9 +32,7 @@ const ViewHeader: React.FC<ViewHeaderProps> = ({ title, description: propDescrip
       },
       "Report": {
         [Role.ADMIN]: "Generate attendance reports and analytics",
-        [Role.TEACHER]: "View attendance reports for your classes",
-        [Role.DISCIPLINE]: "Access disciplinary and attendance trend reports",
-        [Role.NURSE]: "Generate health and medical incident reports"
+        [Role.TEACHER]: "View attendance reports for your classes"
       },
       "User & roles": {
         [Role.ADMIN]: "Manage user accounts and system access permissions",
@@ -64,17 +57,13 @@ const ViewHeader: React.FC<ViewHeaderProps> = ({ title, description: propDescrip
       "Settings": {
         [Role.ADMIN]: "Manage your profile information and account settings",
         [Role.TEACHER]: "Manage your profile information and account settings",
-        [Role.DISCIPLINE]: "Manage your profile information and account settings",
-        [Role.NURSE]: "Manage your profile information and account settings",
         [Role.MAINTAINER]: "Manage your profile information and account settings"
       },
       "Fees": {
-        [Role.ADMIN]: "Manage school fees, payments, and defaulters",
-        [Role.DISCIPLINE]: "View fee payment status for students"
+        [Role.ADMIN]: "Manage school fees, payments, and defaulters"
       },
       "Deliberation": {
-        [Role.ADMIN]: "Configure promotion rules and generate reports",
-        [Role.DISCIPLINE]: "View deliberation results and reports"
+        [Role.ADMIN]: "Configure promotion rules and generate reports"
       },
       "Accounting": {
         [Role.ADMIN]: "Monitor financial transactions and reports"

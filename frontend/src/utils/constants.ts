@@ -40,8 +40,8 @@ const Role = {
   ALL: 'all',
   ADMIN: 'admin',
   TEACHER: 'teacher',
-  DISCIPLINE: 'discipline',
-  NURSE: 'nurse',
+  PARENT: 'parent',
+  STUDENT: 'student',
   MAINTAINER: 'maintainer'
 } as const;
 

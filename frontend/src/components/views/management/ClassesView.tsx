@@ -483,8 +483,8 @@ function ClassesView() {
                   <button
                     onClick={() => setShowFilters(!showFilters)}
                     className={`${showFilters
-                        ? 'bg-main text-white'
-                        : 'bg-white text-gray-700 border border-gray-300'
+                      ? 'bg-main text-white'
+                      : 'bg-white text-gray-700 border border-gray-300'
                       } px-3 py-2 text-sm rounded-lg flex items-center gap-2 hover:opacity-90 transition-colors`}
                   >
                     <FiFilter className="w-4 h-4" />
@@ -592,7 +592,7 @@ function ClassesView() {
                         </div>
                         <div className="flex justify-between">
                           <span>Students:</span>
-                          <span>0</span> {/* TODO: Add student count from API */}
+                          <span>{classItem.student_count || 0}</span>
                         </div>
                       </div>
                     </div>
@@ -1195,8 +1195,8 @@ function ClassesView() {
                                 <td className="px-3 py-2 text-xs text-gray-600">{student.email}</td>
                                 <td className="px-3 py-2 text-xs">
                                   <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${student.is_active
-                                      ? 'bg-main/10 text-main'
-                                      : 'bg-gray-200 text-gray-700'
+                                    ? 'bg-main/10 text-main'
+                                    : 'bg-gray-200 text-gray-700'
                                     }`}>
                                     {student.is_active ? 'Active' : 'Inactive'}
                                   </span>

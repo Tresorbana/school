@@ -91,12 +91,12 @@ function Navbar({ active, setActive }: INavbarActive) {
           {/* Main menu item */}
           <div
             className={`p-4 px-10 flex items-center gap-3 cursor-pointer font-poppins font-bold transition-colors ${item.hasDropdown
-                ? (['Students', 'Intake', 'Classes', 'Courses'].includes(active)
-                  ? "bg-white/20 text-white"
-                  : "hover:bg-white/10")
-                : (active === item.menu
-                  ? "bg-white text-main"
-                  : "hover:bg-white/10")
+              ? (['Students', 'Intake', 'Classes', 'Courses'].includes(active)
+                ? "bg-white/20 text-white"
+                : "hover:bg-white/10")
+              : (active === item.menu
+                ? "bg-white text-main"
+                : "hover:bg-white/10")
               }`}
             onClick={() => item.hasDropdown ? handleManagementClick() : setActive(item.menu)}
           >
@@ -105,9 +105,7 @@ function Navbar({ active, setActive }: INavbarActive) {
               {
                 (role === "teacher" && item.menu == 'Classes')
                   ? "My Classes"
-                  : (role === "nurse" && item.menu === 'Attendance')
-                    ? "Health"
-                    : item.menu
+                  : item.menu
               }
             </span>
             {item.hasDropdown && (
@@ -124,8 +122,8 @@ function Navbar({ active, setActive }: INavbarActive) {
                 <div
                   key={subtab.menu}
                   className={`p-3 px-16 flex items-center gap-3 cursor-pointer font-poppins transition-colors ${active === subtab.menu
-                      ? "bg-white text-main"
-                      : "hover:bg-white/10 text-white/90"
+                    ? "bg-white text-main"
+                    : "hover:bg-white/10 text-white/90"
                     }`}
                   onClick={() => handleSubtabClick(subtab.menu)}
                 >

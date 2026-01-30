@@ -289,10 +289,10 @@ function AdminUserManagement() {
     try {
       const response = await userService.getRoles();
       if (response.status === 'success') {
-        // Filter roles to only show discipline, teacher, nurse for admin
+        // Filter roles to only show teacher for admin (and others if needed)
         const adminAllowedRoles = response.data.filter((role: any) => {
           const roleName = role.name || role.role_name;
-          return roleName && ['discipline', 'teacher', 'nurse'].includes(roleName.toLowerCase());
+          return roleName && ['teacher'].includes(roleName.toLowerCase());
         });
         setRolesOptions(adminAllowedRoles);
       }
@@ -306,8 +306,8 @@ function AdminUserManagement() {
     }
   };
 
-  useEffect(() => { 
-    fetchUsers(); 
+  useEffect(() => {
+    fetchUsers();
     fetchRoles();
   }, []);
 
@@ -371,8 +371,8 @@ function AdminUserManagement() {
         <button
           onClick={() => setShowFilters(!showFilters)}
           className={`px-3 py-1.5 text-sm rounded-md transition-colors min-w-[100px] relative ${showFilters
-              ? 'bg-main text-white hover:bg-main/85'
-              : 'bg-white text-main border border-gray-300 hover:bg-main/5'
+            ? 'bg-main text-white hover:bg-main/85'
+            : 'bg-white text-main border border-gray-300 hover:bg-main/5'
             }`}
         >
           Filters
@@ -491,8 +491,8 @@ function AdminUserManagement() {
                   <td className="px-2 py-1.5 text-gray-600 text-xs">{u.role_name[0].toUpperCase() + u.role_name.slice(1)}</td>
                   <td className="px-2 py-1.5">
                     <span className={`inline-flex px-1.5 py-0.5 rounded text-xs font-medium ${u.role_name !== 'inactive'
-                        ? 'bg-main text-white'
-                        : 'bg-gray-100 text-gray-800'
+                      ? 'bg-main text-white'
+                      : 'bg-gray-100 text-gray-800'
                       }`}>
                       {u.role_name !== 'inactive' ? 'Active' : 'Inactive'}
                     </span>
@@ -517,9 +517,9 @@ function AdminUserManagement() {
                             <FiLoader className="w-4 h-4 text-main animate-spin " />
                           </div>
                         ) : (
-                          <div className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors ${['discipline', 'teacher', 'nurse'].includes(u.role_name) ? "bg-main" : "bg-gray-200"
+                          <div className={`relative inline-flex h-4 w-7 items-center rounded-full transition-colors ${['teacher'].includes(u.role_name) ? "bg-main" : "bg-gray-200"
                             }`}>
-                            <span className={`inline-block h-2 w-2 transform rounded-full bg-white transition-transform duration-300 ${['discipline', 'teacher', 'nurse'].includes(u.role_name) ? "translate-x-3" : "translate-x-0.5"
+                            <span className={`inline-block h-2 w-2 transform rounded-full bg-white transition-transform duration-300 ${['teacher'].includes(u.role_name) ? "translate-x-3" : "translate-x-0.5"
                               }`} />
                           </div>
                         )}

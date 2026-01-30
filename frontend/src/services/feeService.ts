@@ -65,5 +65,12 @@ export const feeService = {
      */
     async getDefaulters(): Promise<{ success: boolean; data: Defaulter[] }> {
         return apiClient.get('/api/fees/defaulters');
+    },
+
+    /**
+     * Get recent transactions (Admin only)
+     */
+    async getRecentTransactions(): Promise<{ success: boolean; data: PaymentRecord[] }> {
+        return apiClient.get('/api/fees/transactions/recent');
     }
 };

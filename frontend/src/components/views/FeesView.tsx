@@ -14,8 +14,11 @@ function FeesView(): JSX.Element {
     const [isLoading, setIsLoading] = useState(false);
     const { addToast } = useToast();
 
+    const [transactions, setTransactions] = useState<any[]>([]);
+
     useEffect(() => {
         fetchSummary();
+        fetchTransactions();
     }, []);
 
     useEffect(() => {
@@ -36,6 +39,18 @@ function FeesView(): JSX.Element {
             addToast({ type: 'error', message: 'Failed to load fee summary' });
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const fetchTransactions = async () => {
+        try {
+            const response = await feeService.getRecentTransactions();
+            if (response.success) {
+                setTransactions(response.data);
+            }
+        } catch (error) {
+            console.error(error);
+            // Silent error for transactions to not annoy user if it fails
         }
     };
 
@@ -166,12 +181,45 @@ function FeesView(): JSX.Element {
 
                 <div className="bg-white rounded-xl shadow-sm border border-slate-200 min-h-[400px]">
                     {activeTab === 'overview' && (
-                        <div className="p-8 text-center text-slate-500 flex flex-col items-center justify-center h-full">
-                            <div className="bg-slate-50 p-4 rounded-full mb-4">
-                                <FiSearch size={24} className="text-slate-400" />
-                            </div>
-                            <p className="font-medium">No recent transactions found</p>
-                            <p className="text-sm mt-1 text-slate-400">Record a payment to see it appear here</p>
+                        <div className="flex flex-col">
+                            {transactions.length > 0 ? (
+                                <table className="w-full text-left border-collapse">
+                                    <thead>
+                                        <tr className="border-b border-slate-100 text-xs text-slate-500 uppercase bg-slate-50/50">
+                                            <th className="p-4 font-medium">Reference</th>
+                                            <th className="p-4 font-medium">Date</th>
+                                            <th className="p-4 font-medium">Method</th>
+                                            <th className="p-4 font-medium text-right">Amount</th>
+                                            <th className="p-4 font-medium text-center">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {transactions.map((tx, idx) => (
+                                            <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                                                <td className="p-4 font-medium text-slate-700">{tx.reference || '-'}</td>
+                                                <td className="p-4 text-slate-600">{new Date(tx.date).toLocaleDateString()}</td>
+                                                <td className="p-4 text-slate-600">{tx.method}</td>
+                                                <td className="p-4 text-right text-slate-600">RWF {Number(tx.amount).toLocaleString()}</td>
+                                                <td className="p-4 text-center">
+                                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${tx.status === 'completed' ? 'bg-green-100 text-green-700' :
+                                                            tx.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
+                                                        }`}>
+                                                        {tx.status}
+                                                    </span>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div className="p-8 text-center text-slate-500 flex flex-col items-center justify-center h-full">
+                                    <div className="bg-slate-50 p-4 rounded-full mb-4">
+                                        <FiSearch size={24} className="text-slate-400" />
+                                    </div>
+                                    <p className="font-medium">No recent transactions found</p>
+                                    <p className="text-sm mt-1 text-slate-400">Record a payment to see it appear here</p>
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -224,6 +272,5 @@ function FeesView(): JSX.Element {
         </div>
     );
 }
-
 
 export default FeesView;

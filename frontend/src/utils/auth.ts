@@ -87,7 +87,7 @@ export const hasRole = (roleCode: number): boolean => {
  * @returns boolean indicating if user is admin
  */
 export const isAdmin = (): boolean => {
-  return hasRole(6794); // ADMIN role code
+  return hasRole(2001); // ADMIN role code
 };
 
 /**
@@ -95,33 +95,24 @@ export const isAdmin = (): boolean => {
  * @returns boolean indicating if user is teacher
  */
 export const isTeacher = (): boolean => {
-  return hasRole(2938); // TEACHER role code
-};
+  return hasRole(4002); // TEACHER role code
+}
 
 /**
- * Check if current user is nurse
- * @returns boolean indicating if user is nurse
+ * Check if current user is student
+ * @returns boolean indicating if user is student
  */
-export const isNurse = (): boolean => {
-  return hasRole(4923); // NURSE role code
-};
+export const isStudent = (): boolean => {
+  return hasRole(8201); // STUDENT role code
+}
 
 /**
- * Check if current user is discipline
- * @returns boolean indicating if user is discipline
+ * Get the string representation of the current user's role
+ * @returns string role or empty string
  */
-export const isDiscipline = (): boolean => {
-  return hasRole(9029); // DISCIPLINE role code
-};
-
-/**
- * Get current user role name
- * @returns string role name or 'unknown'
- */
-export const getCurrentUserRoleName = (): string => {
+export const getUserRole = (): string => {
   if (isAdmin()) return 'admin';
   if (isTeacher()) return 'teacher';
-  if (isNurse()) return 'nurse';
-  if (isDiscipline()) return 'discipline';
-  return 'unknown';
+  if (isStudent()) return 'student';
+  return '';
 };

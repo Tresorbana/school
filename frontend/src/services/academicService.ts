@@ -1,5 +1,5 @@
 import { apiClient } from '../utils/apiClient';
-import { isAdmin, isTeacher, isNurse, isDiscipline } from '../utils/auth';
+import { isAdmin, isTeacher } from '../utils/auth';
 
 // Types
 export interface Student {
@@ -36,6 +36,8 @@ export interface Class {
   year_level: number;
   created_at: string;
   updated_at: string;
+  student_count?: number;
+  course_count?: number;
 }
 
 export interface Course {
@@ -88,9 +90,9 @@ export const studentService = {
     if (params?.filter) queryParams.append('filter', params.filter);
     if (params?.class_id) queryParams.append('class_id', params.class_id);
     if (params?.intake_id) queryParams.append('intake_id', params.intake_id);
-    
+
     const queryString = queryParams.toString() ? `?${queryParams}` : '';
-    
+
     return apiClient.get(`/api/students${queryString}`);
   },
 
@@ -117,10 +119,10 @@ export const studentService = {
   // Toggle student active status
   toggleActive: async (studentId: string, isActive: boolean): Promise<ApiResponse> => {
     console.log('toggleActive called with:', { studentId, isActive, type: typeof isActive });
-    
+
     const requestBody = { is_active: isActive };
     console.log('Request body:', requestBody);
-    
+
     try {
       const result = await apiClient.put(`/api/students/${studentId}/toggle-active`, requestBody);
       console.log('Success response:', result);
@@ -188,9 +190,9 @@ export const intakeService = {
     if (params?.search) queryParams.append('search', params.search);
     if (params?.sort_by) queryParams.append('sort_by', params.sort_by);
     if (params?.sort_order) queryParams.append('sort_order', params.sort_order);
-    
+
     const url = queryParams.toString() ? `/api/intakes?${queryParams}` : '/api/intakes';
-    
+
     return apiClient.get(url);
   },
 
@@ -251,10 +253,10 @@ export const classService = {
     sort_order?: 'ASC' | 'DESC';
     with_courses?: boolean;
   }): Promise<PaginatedResponse<Class> | ApiResponse> => {
-    
+
     // Check user role and handle accordingly
-    if (!isAdmin() && !isTeacher() && !isNurse() && !isDiscipline()) {
-      // For non-admin/teacher/nurse/discipline roles, return empty result
+    if (!isAdmin() && !isTeacher()) {
+      // For non-admin/teacher roles, return empty result
       return {
         success: true,
         data: [],
@@ -262,8 +264,8 @@ export const classService = {
       };
     }
 
-    // For admins, nurses, and discipline users, get all classes using admin endpoint
-    if (isAdmin() || isNurse() || isDiscipline()) {
+    // For admins, get all classes using admin endpoint
+    if (isAdmin()) {
       try {
         const queryParams = new URLSearchParams();
         if (params?.page) queryParams.append('page', params.page.toString());
@@ -272,12 +274,12 @@ export const classService = {
         if (params?.sort_by) queryParams.append('sort_by', params.sort_by);
         if (params?.sort_order) queryParams.append('sort_order', params.sort_order);
         if (params?.with_courses) queryParams.append('with_courses', 'true');
-        
+
         const url = queryParams.toString() ? `/api/classes?${queryParams}` : '/api/classes';
-        
+
         return apiClient.get(url);
       } catch (error: any) {
-        console.error('Admin/Nurse/Discipline classes fetch failed:', error);
+        console.error('Admin classes fetch failed:', error);
         throw error;
       }
     }
@@ -341,9 +343,9 @@ export const classService = {
 
   // Add student to class
   addStudent: async (classId: string, studentId: string, academicYear?: number): Promise<ApiResponse> => {
-    return apiClient.post(`/api/classes/${classId}/students`, { 
-      student_id: studentId, 
-      academic_year: academicYear || new Date().getFullYear() 
+    return apiClient.post(`/api/classes/${classId}/students`, {
+      student_id: studentId,
+      academic_year: academicYear || new Date().getFullYear()
     });
   },
 
@@ -371,9 +373,9 @@ export const courseService = {
     if (params?.sort_by) queryParams.append('sort_by', params.sort_by);
     if (params?.sort_order) queryParams.append('sort_order', params.sort_order);
     if (params?.year_level) queryParams.append('year_level', params.year_level.toString());
-    
+
     const url = queryParams.toString() ? `/api/courses?${queryParams}` : '/api/courses';
-    
+
     return apiClient.get(url);
   },
 
@@ -404,9 +406,9 @@ export const courseService = {
 
   // Assign teacher to course
   assignTeacher: async (courseId: string, teacherEmail: string, classId: string): Promise<ApiResponse> => {
-    return apiClient.post(`/api/courses/${courseId}/teachers`, { 
-      teacher_email: teacherEmail, 
-      class_id: classId 
+    return apiClient.post(`/api/courses/${courseId}/teachers`, {
+      teacher_email: teacherEmail,
+      class_id: classId
     });
   },
 

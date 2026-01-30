@@ -18,15 +18,15 @@ interface RemainderCardsProps {
 
 export function ReviewCards({ title, date, numbers, comment, icon }: ReviewCardsProps) {
   return (
-    <div 
-      className="w-[95%] bg-white/80 backdrop-blur-sm rounded-xl border hover:scale-105 cursor-pointer border-gray-200/50 p-6 transition-all duration-300 hover:bg-white/90" 
+    <div
+      className="w-[95%] bg-white/80 backdrop-blur-sm rounded-xl border hover:scale-105 cursor-pointer border-gray-200/50 p-6 transition-all duration-300 hover:bg-white/90"
       style={{
         boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), -4px 0 8px rgba(0, 0, 0, 0.15), 4px 0 8px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.15)'
       }}
     >
       {/* Header */}
       <div className="mb-4">
-        <span className="text-sm font-semibold text-gray-800">{title}</span> 
+        <span className="text-sm font-semibold text-gray-800">{title}</span>
         <span className="text-gray-400 mx-2">|</span>
         <span className="text-xs text-blue-500 font-medium">{date}</span>
       </div>
@@ -77,7 +77,7 @@ interface SickStudentCardsProps {
 export function SickStudentCards({ name, classroom, reason, notes }: SickStudentCardsProps) {
   const displayText = notes || "N/A";
   const buttonTitle = notes ? `Notes: ${notes}` : `Reason: ${reason}`;
-  
+
   return (
     <div className="w-full rounded-lg bg-gray-100 px-4 py-3 flex items-center justify-between">
       <div className="min-w-0">
@@ -91,7 +91,7 @@ export function SickStudentCards({ name, classroom, reason, notes }: SickStudent
   )
 };
 
-export function RemainderCards({icon, title, message}: RemainderCardsProps) {
+export function RemainderCards({ icon, title, message }: RemainderCardsProps) {
   return (
     <div className="w-full rounded-lg bg-main my-5 p-6">
       <div className="flex items-center gap-7 mb-2">
@@ -130,9 +130,9 @@ interface IHomeTeacherProps {
 export function HomeTeacherCards(props: IHomeTeacherProps) {
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 p-6 w-full transition-all duration-300 hover:bg-white/90 hover:scale-105 hover:cursor-pointer"
-         style={{
-           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), -4px 0 8px rgba(0, 0, 0, 0.15), 4px 0 8px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.15)'
-         }}>
+      style={{
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), -4px 0 8px rgba(0, 0, 0, 0.15), 4px 0 8px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.15)'
+      }}>
       <div className="mb-4">
         <h1 className="text-sm text-gray-800 font-semibold inline">{props.title}</h1>
         {props.date && (<p className="text-xs text-blue-500 font-medium inline"> | {props.date}</p>)}
@@ -157,53 +157,3 @@ export function HomeTeacherCards(props: IHomeTeacherProps) {
   )
 }
 
-interface IHomeNurseReviewCardsProps {
-  title: string;
-  comment: string;
-  icon: string | ReactNode;
-  number: string;
-  date?: string;
-}
-
-export function HomeNurseReviewCards(props: IHomeNurseReviewCardsProps) {
-  return (
-    <div className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 p-6 w-full transition-all duration-300 hover:bg-white/90"
-         style={{
-           boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1), -4px 0 8px rgba(0, 0, 0, 0.15), 4px 0 8px rgba(0, 0, 0, 0.15), 0 4px 8px rgba(0, 0, 0, 0.15)'
-         }}>
-      <div className="mb-4">
-        <h1 className="text-sm text-gray-800 font-semibold inline">{props.title}</h1>
-        {props.date && (<p className="text-xs text-blue-500 font-medium inline"> | {props.date}</p>)}
-      </div>
-      <div className="flex items-center gap-4">
-        <div className="w-12 h-12 bg-main rounded-full flex justify-center items-center shadow-md">
-          {typeof props.icon === 'string' ? (
-            <img src={props.icon} alt="" className="w-6 h-6" />
-          ) : (
-            <div className="text-white text-xl">{props.icon}</div>
-          )}
-        </div>
-        <div className="flex-1">
-          <p className="text-2xl font-bold text-gray-800 mb-1">{props.number}</p>
-          <div className="flex items-center gap-2">
-            <FiTrendingUp className="w-3 h-3 text-main" aria-hidden />
-            <p className="text-sm text-gray-500">{props.comment}</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-
-export function HomeNurseNotificationCards(props: { title: string, message:string}) {
-  return (
-    <div className="bg-main text-white flex justify-between items-center rounded-lg p-6 my-5">
-      <div className="flex flex-col gap-4">
-        <h1 className="font-semibold text-sm">{props.title}</h1>
-        <p className="text-[.8rem]">{props.message}</p>
-      </div>
-      <button className="text-[0.85rem] bg-[#062350] py-2 px-4 rounded-lg">Submit</button>
-    </div>
-  )
-}

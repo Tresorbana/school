@@ -271,7 +271,7 @@ function Signup() {
           </h2>
           <p className="mt-4 w-full max-w-md text-sky-100/90 text-md">
             Build is a smart, role-based school attendance system that helps
-            administrators, teachers, discipline staff, and nurses track and
+            administrators and teachers track and
             manage attendance with ease.
           </p>
 
