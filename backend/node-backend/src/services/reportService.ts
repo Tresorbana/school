@@ -162,4 +162,129 @@ export class ReportService {
 
         return stats;
     }
+
+    static async getTeacherMostAbsentStudents(userId: string, page: number = 1, limit: number = 10) {
+        // Get classes teacher is responsible for
+        const teacherClasses = await prisma.classTeacher.findMany({
+            where: { user_id: userId, is_active: true },
+            select: { class_id: true }
+        });
+        const classIds = teacherClasses.map(tc => tc.class_id);
+
+        if (classIds.length === 0) {
+            return {
+                students: [],
+                pagination: { current_page: page, total_pages: 0, total_count: 0, per_page: limit, has_next: false, has_prev: false }
+            };
+        }
+
+        const skip = (page - 1) * limit;
+
+        // 1. Get all students in teacher's classes
+        const totalStudents = await prisma.student.count({
+            where: { class_id: { in: classIds }, is_active: true }
+        });
+
+        const students = await prisma.student.findMany({
+            where: { class_id: { in: classIds }, is_active: true },
+            select: {
+                student_id: true,
+                first_name: true,
+                last_name: true,
+                email: true,
+                class: { select: { class_name: true } }
+            },
+            take: limit,
+            skip: skip
+        });
+
+        // 2. Hydrate with absence data
+        const studentsWithStats = await Promise.all(students.map(async (s) => {
+            const absences = await prisma.attendance.count({
+                where: { student_id: s.student_id, is_present: false }
+            });
+            const total = await prisma.attendance.count({
+                where: { student_id: s.student_id }
+            });
+
+            return {
+                student_id: s.student_id,
+                first_name: s.first_name,
+                last_name: s.last_name,
+                email: s.email,
+                class_name: s.class?.class_name || 'N/A',
+                absence_count: absences,
+                total_records: total,
+                attendance_rate: total > 0 ? Math.round(((total - absences) / total) * 100) : 100
+            };
+        }));
+
+        // Sort by absences descending (in memory for now, limit is small)
+        studentsWithStats.sort((a, b) => b.absence_count - a.absence_count);
+
+        return {
+            students: studentsWithStats,
+            pagination: {
+                current_page: page,
+                total_pages: Math.ceil(totalStudents / limit),
+                total_count: totalStudents,
+                per_page: limit,
+                has_next: page * limit < totalStudents,
+                has_prev: page > 1
+            }
+        };
+    }
+
+    static async getTeacherRecordedAttendances(userId: string, page: number = 1, limit: number = 10) {
+        const skip = (page - 1) * limit;
+
+        const totalRecords = await prisma.record.count({
+            where: { timetable_roster: { user_id: userId } }
+        });
+
+        const records = await prisma.record.findMany({
+            where: { timetable_roster: { user_id: userId } },
+            include: {
+                timetable_roster: {
+                    include: { class: true, course: true }
+                },
+                attendance: true
+            },
+            orderBy: { created_at: 'desc' },
+            take: limit,
+            skip: skip
+        });
+
+        const formattedRecords = records.map(r => {
+            const total = r.attendance.length;
+            const present = r.attendance.filter(a => a.is_present).length;
+            // Sick count calculation removed due to missing 'remarks' field
+            const sick = 0;
+
+            return {
+                record_id: r.record_id,
+                created_at: r.created_at.toISOString(),
+                class_name: r.timetable_roster.class?.class_name || 'Unknown',
+                course_name: r.timetable_roster.course?.course_name || 'Unknown',
+                period: r.timetable_roster.period,
+                day_of_week: r.timetable_roster.day_of_week,
+                total_students: total,
+                present_count: present,
+                absent_count: total - present,
+                sick_count: sick
+            };
+        });
+
+        return {
+            records: formattedRecords,
+            pagination: {
+                current_page: page,
+                total_pages: Math.ceil(totalRecords / limit),
+                total_count: totalRecords,
+                per_page: limit,
+                has_next: page * limit < totalRecords,
+                has_prev: page > 1
+            }
+        };
+    }
 }

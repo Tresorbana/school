@@ -54,4 +54,13 @@ export class FeeController {
             res.status(500).json({ success: false, message: (error as Error).message });
         }
     }
+
+    static async getRecentTransactions(req: Request, res: Response) {
+        try {
+            // Stub implementation
+            res.json({ success: true, data: [] });
+        } catch (error) {
+            res.status(500).json({ success: false, message: (error as Error).message });
+        }
+    }
 }

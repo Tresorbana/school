@@ -458,4 +458,84 @@ export class DashboardService {
             marked_absent_at: a.created_at
         }));
     }
+
+    static async getTeacherReportStats(userId: string) {
+        // Stats for teacher reports page
+        const today = new Date();
+        const startOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+        const endOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        // Get classes assigned to teacher
+        const teacherClasses = await prisma.classTeacher.findMany({
+            where: { user_id: userId, is_active: true },
+            select: { class_id: true }
+        });
+        const classIds = teacherClasses.map(tc => tc.class_id);
+
+        // 1. Total Students in their classes
+        const totalStudents = await prisma.student.count({
+            where: {
+                class_id: { in: classIds },
+                is_active: true
+            }
+        });
+
+        // 2. Average Attendance Rate (This Month)
+        const totalAttendance = await prisma.attendance.count({
+            where: {
+                student: { class_id: { in: classIds } },
+                record: { created_at: { gte: startOfMonth, lte: endOfMonth } }
+            }
+        });
+        const presentAttendance = await prisma.attendance.count({
+            where: {
+                student: { class_id: { in: classIds } },
+                is_present: true,
+                record: { created_at: { gte: startOfMonth, lte: endOfMonth } }
+            }
+        });
+        const attendanceRate = totalAttendance > 0 ? Math.round((presentAttendance / totalAttendance) * 100) : 0;
+
+        // 3. Classes Taught (This Month) - Count of unique records/lessons
+        const classesTaught = await prisma.record.count({
+            where: {
+                timetable_roster: { user_id: userId },
+                created_at: { gte: startOfMonth, lte: endOfMonth }
+            }
+        });
+
+        // 4. Pending Reports (Drafts or issues) - Stub for now
+        const pendingReports = 0;
+
+        return [
+            { title: 'Total Students', value: totalStudents, subtitle: 'In your classes', iconType: 'users' },
+            { title: 'Attendance Rate', value: `${attendanceRate}%`, subtitle: 'This Month', iconType: 'percent' },
+            { title: 'Classes Taught', value: classesTaught, subtitle: 'This Month', iconType: 'book' },
+            { title: 'Pending Reports', value: pendingReports, subtitle: 'Action Required', iconType: 'alert' }
+        ];
+    }
+
+    static async getRecentActions(limit: number = 10) {
+        // Return recent system activities
+        // Re-using similar logic from AdminDashboard recent_activities but formatted for the feed
+        const recentActivities = await prisma.record.findMany({
+            take: limit,
+            orderBy: { created_at: 'desc' },
+            include: {
+                timetable_roster: {
+                    include: {
+                        class: true,
+                        course: true,
+                        user: true
+                    }
+                }
+            }
+        });
+
+        return recentActivities.map(act => ({
+            message: `${act.timetable_roster?.user?.first_name || 'Teacher'} recorded attendance for ${act.timetable_roster?.class?.class_name || 'Unknown Class'}`,
+            timestamp: act.created_at.toISOString(),
+            type: 'attendance_submission'
+        }));
+    }
 }

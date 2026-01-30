@@ -10,6 +10,7 @@ router.use(authMiddleware);
 router.post('/payment', staffOnly, FeeController.recordPayment);
 router.get('/student/:studentId', staffOnly, FeeController.getStudentPayments);
 router.get('/summary', adminOnly, FeeController.getFeeSummary);
+router.get('/transactions/recent', adminOnly, FeeController.getRecentTransactions);
 router.get('/defaulters', adminOnly, FeeController.getDefaulters);
 
 export default router;

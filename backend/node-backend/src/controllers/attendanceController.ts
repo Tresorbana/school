@@ -47,7 +47,27 @@ export class AttendanceController {
         }
     }
 
+    static async getPermissionRequests(req: Request, res: Response) {
+        try {
+            const result = await AttendanceService.getPermissionRequests();
+            res.json({ success: true, data: result });
+        } catch (error) {
+            res.status(500).json({ success: false, message: (error as Error).message });
+        }
+    }
+
+    static async getAllRecords(req: Request, res: Response) {
+        try {
+            const limit = req.query.limit ? parseInt(req.query.limit as string) : 100;
+            const result = await AttendanceService.getAllRecords(limit);
+            res.json({ success: true, data: result });
+        } catch (error) {
+            res.status(500).json({ success: false, message: (error as Error).message });
+        }
+    }
+
     static async getStatus(req: Request, res: Response) {
+
         try {
             const { rosterId } = req.params;
             const dateStr = req.query.date as string | undefined;

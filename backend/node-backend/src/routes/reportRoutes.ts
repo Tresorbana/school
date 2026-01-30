@@ -10,5 +10,7 @@ router.get('/overview', ReportController.getOverview);
 router.get('/by-class', ReportController.getByClass);
 router.get('/top-absent', ReportController.getTopAbsent);
 router.get('/student-details', ReportController.getStudentDetails);
+router.post('/teacher-most-absent-students', ReportController.getTeacherMostAbsentStudents);
+router.post('/teacher-recorded-attendances', ReportController.getTeacherRecordedAttendances);
 
 export default router;

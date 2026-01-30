@@ -21,6 +21,7 @@ import financialRoutes from './routes/financialRoutes.js';
 import deliberationRoutes from './routes/deliberationRoutes.js';
 import markRoutes from './routes/markRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
+import healthRoutes from './routes/healthRoutes.js';
 import { staffOnly } from './middleware/roleMiddleware.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
 
@@ -53,6 +54,7 @@ app.use('/api/financial', authMiddleware, staffOnly, financialRoutes);
 app.use('/api/deliberation', authMiddleware, staffOnly, deliberationRoutes);
 app.use('/api/marks', authMiddleware, markRoutes);
 app.use('/api/notifications', authMiddleware, notificationRoutes);
+app.use('/api/health', authMiddleware, healthRoutes);
 
 app.get('/', (req, res) => {
     res.send('RCAspire Backend API');

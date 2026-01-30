@@ -19,5 +19,8 @@ router.get('/admin', DashboardController.getAdminDashboard);
 router.get('/period-recording-status', DashboardController.getPeriodRecordingStatus);
 router.get('/self-study-performance', DashboardController.getSelfStudyPerformance);
 router.get('/attendance-trends', DashboardController.getAttendanceTrends);
+router.post('/teacher-report-stats', DashboardController.getTeacherReportStats);
+router.get('/recent-actions', DashboardController.getRecentActions);
+router.post('/health-statistics-by-class', DashboardController.getHealthStatisticsByClass);
 
 export default router;

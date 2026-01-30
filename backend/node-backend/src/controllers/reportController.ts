@@ -59,4 +59,41 @@ export class ReportController {
             res.status(500).json({ success: false, message: (error as Error).message });
         }
     }
+
+    static async getTeacherMostAbsentStudents(req: Request, res: Response) {
+        try {
+            const { user_id, page, limit } = req.body;
+            // If called via GET params (optional support) or POST body
+            const userId = user_id || (req as any).user?.user_id;
+
+            if (!userId) return res.status(400).json({ success: false, message: 'User ID required' });
+
+            const result = await ReportService.getTeacherMostAbsentStudents(
+                userId,
+                page ? Number(page) : 1,
+                limit ? Number(limit) : 10
+            );
+            res.json({ success: true, data: result });
+        } catch (error) {
+            res.status(500).json({ success: false, message: (error as Error).message });
+        }
+    }
+
+    static async getTeacherRecordedAttendances(req: Request, res: Response) {
+        try {
+            const { user_id, page, limit } = req.body;
+            const userId = user_id || (req as any).user?.user_id;
+
+            if (!userId) return res.status(400).json({ success: false, message: 'User ID required' });
+
+            const result = await ReportService.getTeacherRecordedAttendances(
+                userId,
+                page ? Number(page) : 1,
+                limit ? Number(limit) : 10
+            );
+            res.json({ success: true, data: result });
+        } catch (error) {
+            res.status(500).json({ success: false, message: (error as Error).message });
+        }
+    }
 }

@@ -95,6 +95,34 @@ export class AttendanceService {
         });
     }
 
+    static async getPermissionRequests() {
+        return prisma.attendancePermissionRequest.findMany({
+            where: { status: 'pending' },
+            include: {
+                teacher: { select: { first_name: true, last_name: true } },
+                class: { select: { class_name: true } }
+            },
+            orderBy: { created_at: 'desc' }
+        });
+    }
+
+    static async getAllRecords(limit: number = 100) {
+        return prisma.record.findMany({
+            take: limit,
+            orderBy: { created_at: 'desc' },
+            include: {
+                timetable_roster: {
+                    include: {
+                        course: true,
+                        class: true,
+                        user: true // teacher
+                    }
+                },
+                attendance: true
+            }
+        });
+    }
+
     static async approvePermission(requestId: string, adminId: string, comments?: string) {
         return prisma.attendancePermissionRequest.update({
             where: { request_id: requestId },

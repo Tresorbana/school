@@ -149,4 +149,36 @@ export class DashboardController {
             res.status(500).json({ success: false, message: (error as Error).message });
         }
     }
+
+    static async getTeacherReportStats(req: Request, res: Response) {
+        try {
+            const user = (req as any).user;
+            if (!user) return res.status(401).json({ success: false, message: 'Unauthorized' });
+
+            const data = await DashboardService.getTeacherReportStats(user.user_id);
+            res.json({ success: true, data });
+        } catch (error) {
+            res.status(500).json({ success: false, message: (error as Error).message });
+        }
+    }
+
+    static async getRecentActions(req: Request, res: Response) {
+        try {
+            const { limit } = req.query;
+            const data = await DashboardService.getRecentActions(limit ? Number(limit) : 10);
+            res.json({ success: true, data });
+        } catch (error) {
+            res.status(500).json({ success: false, message: (error as Error).message });
+        }
+    }
+
+    static async getHealthStatisticsByClass(req: Request, res: Response) {
+        try {
+            const { class_id } = req.body;
+            // Stub implementation
+            res.json({ success: true, data: { healthy: 0, sick: 0, total: 0 } });
+        } catch (error) {
+            res.status(500).json({ success: false, message: (error as Error).message });
+        }
+    }
 }
