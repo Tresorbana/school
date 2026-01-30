@@ -8,7 +8,6 @@ import { useToast } from "../../utils/context/ToastContext";
 
 function FeesView(): JSX.Element {
     const [activeTab, setActiveTab] = useState<'overview' | 'payments' | 'defaulters'>('overview');
-    console.log(setActiveTab); // Placeholder to avoid unused var warning if logic expands
     const [summary, setSummary] = useState<FeeSummary | null>(null);
     const [defaulters, setDefaulters] = useState<Defaulter[]>([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -50,7 +49,6 @@ function FeesView(): JSX.Element {
             }
         } catch (error) {
             console.error(error);
-            // Silent error for transactions to not annoy user if it fails
         }
     };
 
@@ -70,203 +68,221 @@ function FeesView(): JSX.Element {
     };
 
     return (
-        <div className="p-6 h-full flex flex-col gap-6 overflow-y-auto bg-[#f0f2f5] text-slate-800">
-            <ViewHeader
-                title="School Fees Management"
-                description="Track payments, manage defaulters, and view financial summaries"
-                rightElement={
-                    <div className="flex gap-3">
-                        <button className="flex items-center gap-2 bg-main text-white px-4 py-2 rounded-lg hover:bg-main-hover transition-colors">
-                            <FiPlus />
-                            <span>Record Payment</span>
+        <div className="font-poppins">
+            <div className="m-10 my-4 flex flex-col gap-6">
+                <ViewHeader
+                    title="School Fees Management"
+                    description="Track payments, manage defaulters, and view financial summaries"
+                    rightElement={
+                        <div className="flex gap-3">
+                            <button className="flex items-center gap-2 bg-main text-white px-4 py-2 rounded-lg hover:bg-main-hover transition-colors">
+                                <FiPlus />
+                                <span>Record Payment</span>
+                            </button>
+                            <button className="flex items-center gap-2 border border-slate-300 bg-white text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">
+                                <FiPrinter />
+                                <span>Report</span>
+                            </button>
+                        </div>
+                    }
+                />
+
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <p className="text-slate-500 text-sm font-medium">Total Collected</p>
+                                <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                                    RWF {summary?.total_collected?.toLocaleString() || '0'}
+                                </h3>
+                            </div>
+                            <div className="w-12 h-12 rounded-full bg-main flex items-center justify-center shadow-md text-white">
+                                <FiDollarSign size={20} />
+                            </div>
+                        </div>
+                        <div className="mt-4 text-xs text-slate-400">Total received this year</div>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <p className="text-slate-500 text-sm font-medium">Outstanding</p>
+                                <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                                    RWF {summary?.outstanding_balance?.toLocaleString() || '0'}
+                                </h3>
+                            </div>
+                            <div className="w-12 h-12 rounded-full bg-main flex items-center justify-center shadow-md text-white">
+                                <FiAlertCircle size={20} />
+                            </div>
+                        </div>
+                        <div className="mt-4 text-xs text-slate-400">Unpaid student fees</div>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <p className="text-slate-500 text-sm font-medium">Collection Rate</p>
+                                <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                                    {summary?.collection_rate || 0}%
+                                </h3>
+                            </div>
+                            <div className="w-12 h-12 rounded-full bg-main flex items-center justify-center shadow-md text-white">
+                                <FiBarChart2 size={20} />
+                            </div>
+                        </div>
+                        <div className="mt-4 w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                            <div
+                                className="bg-main h-full rounded-full"
+                                style={{ width: `${summary?.collection_rate || 0}%` }}
+                            ></div>
+                        </div>
+                    </div>
+
+                    <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <p className="text-slate-500 text-sm font-medium">Expected Total</p>
+                                <h3 className="text-2xl font-bold text-slate-800 mt-1">
+                                    RWF {summary?.total_expected?.toLocaleString() || '0'}
+                                </h3>
+                            </div>
+                            <div className="w-12 h-12 rounded-full bg-main flex items-center justify-center shadow-md text-white">
+                                <FiDollarSign size={20} />
+                            </div>
+                        </div>
+                        <div className="mt-4 text-xs text-slate-400">Projected yearly revenue</div>
+                    </div>
+                </div>
+
+                {/* Main Content Tabs */}
+                <div className="flex flex-col gap-4">
+                    <div className="flex border-b border-slate-200">
+                        <button
+                            onClick={() => setActiveTab('overview')}
+                            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'overview'
+                                ? 'border-main text-main'
+                                : 'border-transparent text-slate-500 hover:text-slate-700'
+                                }`}
+                        >
+                            Recent Transactions
                         </button>
-                        <button className="flex items-center gap-2 border border-slate-300 bg-white text-slate-700 px-4 py-2 rounded-lg hover:bg-slate-50 transition-colors">
-                            <FiPrinter />
-                            <span>Report</span>
+                        <button
+                            onClick={() => setActiveTab('defaulters')}
+                            className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'defaulters'
+                                ? 'border-main text-main'
+                                : 'border-transparent text-slate-500 hover:text-slate-700'
+                                }`}
+                        >
+                            Defaulters List
                         </button>
                     </div>
-                }
-            />
 
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-slate-500 text-sm font-medium">Total Collected</p>
-                            <h3 className="text-2xl font-bold text-accent-green mt-1">
-                                RWF {summary?.total_collected?.toLocaleString() || '0'}
-                            </h3>
-                        </div>
-                        <div className="p-3 bg-green-50 rounded-lg text-accent-green">
-                            <FiDollarSign size={20} />
-                        </div>
-                    </div>
-                    <div className="mt-4 text-xs text-slate-400">Total received this year</div>
-                </div>
-
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-slate-500 text-sm font-medium">Outstanding</p>
-                            <h3 className="text-2xl font-bold text-red-500 mt-1">
-                                RWF {summary?.outstanding_balance?.toLocaleString() || '0'}
-                            </h3>
-                        </div>
-                        <div className="p-3 bg-red-50 rounded-lg text-red-500">
-                            <FiAlertCircle size={20} />
-                        </div>
-                    </div>
-                    <div className="mt-4 text-xs text-slate-400">Unpaid student fees</div>
-                </div>
-
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-slate-500 text-sm font-medium">Collection Rate</p>
-                            <h3 className="text-2xl font-bold text-blue-600 mt-1">
-                                {summary?.collection_rate || 0}%
-                            </h3>
-                        </div>
-                        <div className="p-3 bg-blue-50 rounded-lg text-blue-600">
-                            <FiBarChart2 size={20} />
-                        </div>
-                    </div>
-                    <div className="mt-4 w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                        <div
-                            className="bg-blue-600 h-full rounded-full"
-                            style={{ width: `${summary?.collection_rate || 0}%` }}
-                        ></div>
-                    </div>
-                </div>
-
-                <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-                    <div className="flex justify-between items-start">
-                        <div>
-                            <p className="text-slate-500 text-sm font-medium">Expected Total</p>
-                            <h3 className="text-2xl font-bold text-slate-800 mt-1">
-                                RWF {summary?.total_expected?.toLocaleString() || '0'}
-                            </h3>
-                        </div>
-                        <div className="p-3 bg-slate-50 rounded-lg text-slate-600">
-                            <FiDollarSign size={20} />
-                        </div>
-                    </div>
-                    <div className="mt-4 text-xs text-slate-400">Projected yearly revenue</div>
-                </div>
-            </div>
-
-            {/* Main Content Tabs */}
-            <div className="flex flex-col gap-4">
-                <div className="flex border-b border-slate-200">
-                    <button
-                        onClick={() => setActiveTab('overview')}
-                        className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'overview'
-                            ? 'border-main text-main'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                            }`}
-                    >
-                        Recent Transactions
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('defaulters')}
-                        className={`px-6 py-3 text-sm font-medium transition-colors border-b-2 ${activeTab === 'defaulters'
-                            ? 'border-main text-main'
-                            : 'border-transparent text-slate-500 hover:text-slate-700'
-                            }`}
-                    >
-                        Defaulters List
-                    </button>
-                </div>
-
-                <div className="bg-white rounded-xl shadow-sm border border-slate-200 min-h-[400px]">
-                    {activeTab === 'overview' && (
-                        <div className="flex flex-col">
-                            {transactions.length > 0 ? (
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="border-b border-slate-100 text-xs text-slate-500 uppercase bg-slate-50/50">
-                                            <th className="p-4 font-medium">Reference</th>
-                                            <th className="p-4 font-medium">Date</th>
-                                            <th className="p-4 font-medium">Method</th>
-                                            <th className="p-4 font-medium text-right">Amount</th>
-                                            <th className="p-4 font-medium text-center">Status</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {transactions.map((tx, idx) => (
-                                            <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                                                <td className="p-4 font-medium text-slate-700">{tx.reference || '-'}</td>
-                                                <td className="p-4 text-slate-600">{new Date(tx.date).toLocaleDateString()}</td>
-                                                <td className="p-4 text-slate-600">{tx.method}</td>
-                                                <td className="p-4 text-right text-slate-600">RWF {Number(tx.amount).toLocaleString()}</td>
-                                                <td className="p-4 text-center">
-                                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${tx.status === 'completed' ? 'bg-green-100 text-green-700' :
+                    <div className="bg-white rounded-xl shadow-sm border border-slate-200 min-h-[400px]">
+                        {activeTab === 'overview' && (
+                            <div className="flex flex-col">
+                                <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+                                    <h3 className="font-bold text-lg text-slate-800 flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-main flex items-center justify-center shadow-md text-white">
+                                            <FiSearch size={18} />
+                                        </div>
+                                        Recent Transactions
+                                    </h3>
+                                </div>
+                                {transactions.length > 0 ? (
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="border-b border-slate-100 text-xs text-slate-500 uppercase bg-slate-50/50">
+                                                <th className="p-4 font-medium">Reference</th>
+                                                <th className="p-4 font-medium">Date</th>
+                                                <th className="p-4 font-medium">Method</th>
+                                                <th className="p-4 font-medium text-right">Amount</th>
+                                                <th className="p-4 font-medium text-center">Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {transactions.map((tx, idx) => (
+                                                <tr key={idx} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                                                    <td className="p-4 font-medium text-slate-700">{tx.reference || '-'}</td>
+                                                    <td className="p-4 text-slate-600">{new Date(tx.date).toLocaleDateString()}</td>
+                                                    <td className="p-4 text-slate-600">{tx.method}</td>
+                                                    <td className="p-4 text-right text-slate-800 font-medium">RWF {Number(tx.amount).toLocaleString()}</td>
+                                                    <td className="p-4 text-center">
+                                                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${tx.status === 'completed' ? 'bg-green-100 text-green-700' :
                                                             tx.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
-                                                        }`}>
-                                                        {tx.status}
-                                                    </span>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            ) : (
-                                <div className="p-8 text-center text-slate-500 flex flex-col items-center justify-center h-full">
-                                    <div className="bg-slate-50 p-4 rounded-full mb-4">
-                                        <FiSearch size={24} className="text-slate-400" />
+                                                            }`}>
+                                                            {tx.status}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <div className="p-8 text-center text-slate-500 flex flex-col items-center justify-center min-h-[300px]">
+                                        <div className="bg-slate-50 p-4 rounded-full mb-4">
+                                            <FiSearch size={24} className="text-slate-400" />
+                                        </div>
+                                        <p className="font-medium">No recent transactions found</p>
+                                        <p className="text-sm mt-1 text-slate-400">Record a payment to see it appear here</p>
                                     </div>
-                                    <p className="font-medium">No recent transactions found</p>
-                                    <p className="text-sm mt-1 text-slate-400">Record a payment to see it appear here</p>
-                                </div>
-                            )}
-                        </div>
-                    )}
+                                )}
+                            </div>
+                        )}
 
-                    {activeTab === 'defaulters' && (
-                        <div className="flex flex-col">
-                            {isLoading ? (
-                                <div className="p-8 text-center text-slate-500">Loading defaulters...</div>
-                            ) : defaulters.length > 0 ? (
-                                <table className="w-full text-left border-collapse">
-                                    <thead>
-                                        <tr className="border-b border-slate-100 text-xs text-slate-500 uppercase bg-slate-50/50">
-                                            <th className="p-4 font-medium">Student</th>
-                                            <th className="p-4 font-medium">Class</th>
-                                            <th className="p-4 font-medium text-right">Total Paid</th>
-                                            <th className="p-4 font-medium text-right">Balance</th>
-                                            <th className="p-4 font-medium text-right">Days Overdue</th>
-                                            <th className="p-4 font-medium text-center">Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {defaulters.map((student) => (
-                                            <tr key={student.student_id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
-                                                <td className="p-4 font-medium text-slate-700">{student.student_name}</td>
-                                                <td className="p-4 text-slate-600">{student.class_name}</td>
-                                                <td className="p-4 text-right text-slate-600">RWF {student.total_paid.toLocaleString()}</td>
-                                                <td className="p-4 text-right font-medium text-red-500">RWF {student.balance.toLocaleString()}</td>
-                                                <td className="p-4 text-right text-slate-600">{student.days_overdue} days</td>
-                                                <td className="p-4 text-center">
-                                                    <button className="text-xs font-medium text-main hover:underline bg-slate-100 px-3 py-1.5 rounded-full">
-                                                        Reminder
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            ) : (
-                                <div className="p-8 text-center text-slate-500 flex flex-col items-center justify-center h-full">
-                                    <div className="bg-green-50 p-4 rounded-full mb-4">
-                                        <FiDollarSign size={24} className="text-green-500" />
-                                    </div>
-                                    <p className="font-medium text-slate-700">All fees collected!</p>
-                                    <p className="text-sm mt-1 text-slate-400">No overdue payments found</p>
+                        {activeTab === 'defaulters' && (
+                            <div className="flex flex-col">
+                                <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+                                    <h3 className="font-bold text-lg text-slate-800 flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-main flex items-center justify-center shadow-md text-white">
+                                            <FiAlertCircle size={18} />
+                                        </div>
+                                        Defaulters List
+                                    </h3>
                                 </div>
-                            )}
-                        </div>
-                    )}
+                                {isLoading ? (
+                                    <div className="p-8 text-center text-slate-500">Loading defaulters...</div>
+                                ) : defaulters.length > 0 ? (
+                                    <table className="w-full text-left border-collapse">
+                                        <thead>
+                                            <tr className="border-b border-slate-100 text-xs text-slate-500 uppercase bg-slate-50/50">
+                                                <th className="p-4 font-medium">Student</th>
+                                                <th className="p-4 font-medium">Class</th>
+                                                <th className="p-4 font-medium text-right">Total Paid</th>
+                                                <th className="p-4 font-medium text-right">Balance</th>
+                                                <th className="p-4 font-medium text-right">Days Overdue</th>
+                                                <th className="p-4 font-medium text-center">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {defaulters.map((student) => (
+                                                <tr key={student.student_id} className="border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
+                                                    <td className="p-4 font-medium text-slate-700">{student.student_name}</td>
+                                                    <td className="p-4 text-slate-600">{student.class_name}</td>
+                                                    <td className="p-4 text-right text-slate-800">RWF {student.total_paid.toLocaleString()}</td>
+                                                    <td className="p-4 text-right font-bold text-slate-800">RWF {student.balance.toLocaleString()}</td>
+                                                    <td className="p-4 text-right text-slate-600">{student.days_overdue} days</td>
+                                                    <td className="p-4 text-center">
+                                                        <button className="text-xs font-medium text-main hover:underline bg-slate-100 px-3 py-1.5 rounded-full">
+                                                            Reminder
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                ) : (
+                                    <div className="p-8 text-center text-slate-500 flex flex-col items-center justify-center min-h-[300px]">
+                                        <div className="bg-main/5 p-4 rounded-full mb-4">
+                                            <FiDollarSign size={24} className="text-main" />
+                                        </div>
+                                        <p className="font-medium text-slate-700">All fees collected!</p>
+                                        <p className="text-sm mt-1 text-slate-400">No overdue payments found</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
         </div>
